@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+.github
+.vscode
+coverage
+playwright-report
+test-results
+*.log
+.env
+.env.*
+!.env.example
+Dockerfile*
+docker-compose*.yml

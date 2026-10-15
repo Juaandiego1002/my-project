@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: my-project
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d my-project']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    command: pnpm dev
+    ports:
+      - '3000:3000'
+    environment:
+      # Dentro de la red de compose el host es el nombre del servicio, no localhost.
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/my-project
+      # HMR fiable con bind mounts sobre Windows/macOS.
+      WATCHPACK_POLLING: 'true'
+      CHOKIDAR_USEPOLLING: 'true'
+    volumes:
+      # Código del host; node_modules y .next propios del contenedor (binarios linux).
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
