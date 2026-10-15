@@ -3,9 +3,12 @@ import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { FeaturedProductsBlock } from '@/blocks/FeaturedProducts/Component'
 import { FormBlock } from '@/blocks/Form/Component'
+import { HeroSliderBlock } from '@/blocks/HeroSlider/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
+import { WhyUsBlock } from '@/blocks/WhyUs/Component'
 import { toKebabCase } from '@/utilities/toKebabCase'
 import React, { Fragment } from 'react'
 
@@ -17,13 +20,18 @@ const blockComponents = {
   carousel: CarouselBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
+  featuredProducts: FeaturedProductsBlock,
   formBlock: FormBlock,
+  heroSlider: HeroSliderBlock,
   mediaBlock: MediaBlock,
   threeItemGrid: ThreeItemGridBlock,
+  whyUs: WhyUsBlock,
 }
 
+const fullBleedBlocks = new Set(['heroSlider', 'featuredProducts', 'whyUs'])
+
 export const RenderBlocks: React.FC<{
-  blocks: Page['layout'][0][]
+  blocks: Page['layout']
 }> = (props) => {
   const { blocks } = props
 
@@ -40,7 +48,7 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-16" key={index}>
+                <div className={fullBleedBlocks.has(blockType) ? undefined : 'my-16'} key={index}>
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
                   <Block id={toKebabCase(blockName!)} {...block} />

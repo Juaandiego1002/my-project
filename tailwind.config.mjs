@@ -1,4 +1,6 @@
-const plugin = require('tailwindcss/plugin')
+import plugin from 'tailwindcss/plugin'
+import typography from '@tailwindcss/typography'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -103,7 +105,9 @@ export default {
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-geist-sans)'],
+        sans: ['var(--font-raleway)'],
+        heading: ['var(--font-lora)'],
+        script: ['var(--font-great-vibes)'],
       },
       keyframes: {
         fadeIn: {
@@ -176,7 +180,7 @@ export default {
     hoverOnlyWhenSupported: true,
   },
   plugins: [
-    require('@tailwindcss/typography'),
+    typography,
     plugin(({ matchUtilities, theme }) => {
       matchUtilities(
         {

@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
+import { Container } from '@/components/Container'
+import { RichText } from '@/components/RichText'
+import { Section } from '@/components/Section'
 import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -59,12 +62,22 @@ export default async function Page({ params }: Args) {
     return notFound()
   }
 
-  const { hero, layout } = page
+  const { hero, layout, content, title } = page
+  const hasBlocks = Array.isArray(layout) && layout.length > 0
 
   return (
-    <article className="pt-16 pb-24">
+    <article className="pb-24">
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      {hasBlocks ? (
+        <RenderBlocks blocks={layout} />
+      ) : content ? (
+        <Section>
+          <Container>
+            <h1 className="font-heading text-4xl font-bold text-gray-900">{title}</h1>
+            <RichText className="mt-6 max-w-none" data={content} enableGutter={false} />
+          </Container>
+        </Section>
+      ) : null}
     </article>
   )
 }

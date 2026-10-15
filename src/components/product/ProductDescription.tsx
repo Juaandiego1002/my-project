@@ -52,37 +52,49 @@ export function ProductDescription({ product }: { product: Product }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-        <h1 className="text-2xl font-medium">{product.title}</h1>
-        <div className="uppercase font-mono">
-          {hasVariants ? (
-            <Price highestAmount={highestAmount} lowestAmount={lowestAmount} />
-          ) : (
-            <Price amount={amount} />
-          )}
-        </div>
-      </div>
+    <div className="flex flex-col">
+      <h1 className="font-heading text-3xl font-bold text-gray-900 md:text-4xl">{product.title}</h1>
+
       {product.description ? (
-        <RichText className="" data={product.description} enableGutter={false} />
+        <RichText className="mt-4 text-gray-600" data={product.description} enableGutter={false} />
       ) : null}
-      <hr />
-      {hasVariants && (
-        <>
+
+      <div className="mt-6 flex items-baseline gap-3">
+        {hasVariants ? (
+          <Price
+            as="span"
+            className="text-3xl font-bold text-brand-dark"
+            highestAmount={highestAmount}
+            lowestAmount={lowestAmount}
+          />
+        ) : (
+          <Price amount={amount} as="span" className="text-3xl font-bold text-brand-dark" />
+        )}
+
+        {!hasVariants && typeof product.compareAtPrice === 'number' ? (
+          <Price
+            amount={product.compareAtPrice}
+            as="span"
+            className="text-lg text-gray-400 line-through"
+          />
+        ) : null}
+      </div>
+
+      {hasVariants ? (
+        <div className="mt-6">
           <Suspense fallback={null}>
             <VariantSelector product={product} />
           </Suspense>
+        </div>
+      ) : null}
 
-          <hr />
-        </>
-      )}
-      <div className="flex items-center justify-between">
+      <div className="mt-6 flex items-center">
         <Suspense fallback={null}>
           <StockIndicator product={product} />
         </Suspense>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="mt-6">
         <Suspense fallback={null}>
           <AddToCart product={product} />
         </Suspense>

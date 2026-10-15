@@ -144,6 +144,48 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
           fields: [
             ...defaultCollection.fields,
             {
+              name: 'compareAtPrice',
+              type: 'number',
+              label: 'Precio anterior',
+              admin: {
+                description:
+                  'Opcional. Si es mayor al precio actual se muestra un badge de descuento.',
+              },
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'rating',
+                  type: 'number',
+                  label: 'Valoración',
+                  min: 0,
+                  max: 5,
+                  admin: {
+                    step: 0.1,
+                    width: '50%',
+                  },
+                },
+                {
+                  name: 'reviewCount',
+                  type: 'number',
+                  label: 'Nº de reseñas',
+                  min: 0,
+                  admin: {
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'newArrival',
+              type: 'checkbox',
+              label: 'Novedad',
+              admin: {
+                description: 'Muestra el badge "Nuevo" en la tarjeta de producto.',
+              },
+            },
+            {
               name: 'relatedProducts',
               type: 'relationship',
               filterOptions: ({ id }) => {

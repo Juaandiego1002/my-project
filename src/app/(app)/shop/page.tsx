@@ -1,5 +1,4 @@
-import { Grid } from '@/components/Grid'
-import { ProductGridItem } from '@/components/ProductGridItem'
+import { ProductCard } from '@/components/ProductCard'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -21,6 +20,7 @@ export default async function ShopPage({ searchParams }: Props) {
 
   const products = await payload.find({
     collection: 'products',
+    depth: 1,
     draft: false,
     overrideAccess: false,
     select: {
@@ -29,6 +29,12 @@ export default async function ShopPage({ searchParams }: Props) {
       gallery: true,
       categories: true,
       priceInUSD: true,
+      compareAtPrice: true,
+      rating: true,
+      reviewCount: true,
+      newArrival: true,
+      inventory: true,
+      enableVariants: true,
     },
     ...(sort ? { sort } : { sort: 'title' }),
     ...(searchValue || category
@@ -91,11 +97,11 @@ export default async function ShopPage({ searchParams }: Props) {
       )}
 
       {products?.docs.length > 0 ? (
-        <Grid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.docs.map((product) => {
-            return <ProductGridItem key={product.id} product={product} />
+            return <ProductCard key={product.id} product={product} />
           })}
-        </Grid>
+        </div>
       ) : null}
     </div>
   )

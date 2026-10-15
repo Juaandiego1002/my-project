@@ -20,7 +20,7 @@ Its snippets use `mongooseAdapter`; this repo uses `postgresAdapter` (`src/paylo
 ## Commands
 
 - `pnpm dev` — dev server on :3000 (needs a running Postgres, see below).
-- `./scripts/dev-stack.sh` — builds and runs **Postgres + Next in Docker** (`up` default, plus `down`, `logs`, `ps`, `shell`, `db`, `reset`). Host port 3000 must be free: a host `pnpm dev` and the container cannot both own it (the script aborts if 3000 already answers).
+- `./scripts/dev-stack.sh` — builds and runs **Postgres + Next in Docker** (`up` is idempotent, plus `rebuild`, `down`, `logs`, `ps`, `shell`, `db`, `reset`). Host port 3000 must be free: a host `pnpm dev` and the container cannot both own it (the script aborts unless the responder on 3000 is its own app container). After changing `package.json`/`pnpm-lock.yaml` use `rebuild`, not `up` — `up` reuses the container's old `node_modules` volume.
 - `pnpm generate:types` — run after any collection/field change and commit the updated `src/payload-types.ts`.
 - `pnpm payload <cmd>` — Payload CLI, e.g. `pnpm payload migrate:create`, `pnpm payload migrate`.
 - `pnpm exec prettier --write .` — formatting (`.prettierrc.json`: no semicolons, single quotes, printWidth 100, Tailwind plugin sorts classes). `lint-staged`/`@vercel/git-hooks` are installed but unconfigured, so nothing runs on commit.
@@ -30,7 +30,7 @@ Its snippets use `mongooseAdapter`; this repo uses `postgresAdapter` (`src/paylo
 ## Database and environment
 
 - Postgres only, provided by the root `docker-compose.yml`: `docker compose up -d` (db `my-project`, user/password `postgres`, port 5432). `DATABASE_URL` must be a `postgresql://…` connection string; with an unreachable database, dev and tests die with `ECONNREFUSED 127.0.0.1:5432`.
-- The compose `app` service (`Dockerfile.dev`) runs Next in Docker. Inside the container `DATABASE_URL` is overridden to `postgres:5432` (service name, not localhost); `node_modules` and `.next` live in container-only volumes (host binaries are win32), so after changing `package.json` rebuild with `docker compose build app`. HMR on Windows bind mounts relies on `WATCHPACK_POLLING`/`CHOKIDAR_USEPOLLING`.
+- The compose `app` service (`Dockerfile.dev`) runs Next in Docker. Inside the container `DATABASE_URL` is overridden to `postgres:5432` (service name, not localhost). `node_modules` and `.next` are **anonymous volumes that survive recreates**, so a plain `docker compose up --build` keeps stale deps after a `package.json` change; `./scripts/dev-stack.sh rebuild` uses `--renew-anon-volumes`. HMR on Windows bind mounts relies on `WATCHPACK_POLLING`/`CHOKIDAR_USEPOLLING`.
 - A reachable local Postgres is a prerequisite for `pnpm dev`, `pnpm test:int`, and Playwright e2e (e2e boots the dev server).
 - Schema is auto-pushed on connect outside production (`push` is not disabled in the adapter), so local schema edits need no migrations. For production: `pnpm payload migrate:create` locally, commit the SQL files, then `pnpm payload migrate` before `pnpm start`.
 - Required env: `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `NEXT_PUBLIC_SERVER_URL`, plus Stripe keys (`STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOKS_SIGNING_SECRET`). Local Stripe webhooks: `pnpm stripe-webhooks` (forwards to localhost:3000/api/payments/stripe/webhooks).

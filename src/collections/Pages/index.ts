@@ -8,8 +8,11 @@ import { adminOnly } from '@/access/adminOnly'
 import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
+import { FeaturedProducts } from '@/blocks/FeaturedProducts/config'
 import { FormBlock } from '@/blocks/Form/config'
+import { HeroSlider } from '@/blocks/HeroSlider/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { WhyUs } from '@/blocks/WhyUs/config'
 import { hero } from '@/fields/hero'
 import { slugField } from 'payload'
 import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
@@ -85,8 +88,18 @@ export const Pages: CollectionConfig = {
         {
           fields: [
             {
+              name: 'content',
+              type: 'richText',
+              label: 'Contenido',
+              admin: {
+                description:
+                  'Texto de la página. Se muestra cuando la página no usa bloques de layout.',
+              },
+            },
+            {
               name: 'layout',
               type: 'blocks',
+              minRows: 0,
               blocks: [
                 CallToAction,
                 Content,
@@ -96,8 +109,10 @@ export const Pages: CollectionConfig = {
                 ThreeItemGrid,
                 Banner,
                 FormBlock,
+                HeroSlider,
+                FeaturedProducts,
+                WhyUs,
               ],
-              required: true,
             },
           ],
           label: 'Content',

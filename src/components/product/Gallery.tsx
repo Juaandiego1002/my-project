@@ -49,11 +49,11 @@ export const Gallery: React.FC<Props> = ({ gallery }) => {
 
   return (
     <div>
-      <div className="relative w-full overflow-hidden mb-8">
+      <div className="relative mb-4 w-full overflow-hidden rounded-xl bg-gray-100">
         <Media
           resource={gallery[current].image}
           className="w-full"
-          imgClassName="w-full rounded-lg"
+          imgClassName="aspect-square w-full object-cover"
         />
       </div>
 

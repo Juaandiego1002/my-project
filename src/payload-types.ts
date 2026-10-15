@@ -300,6 +300,16 @@ export interface Product {
   };
   priceInUSDEnabled?: boolean | null;
   priceInUSD?: number | null;
+  /**
+   * Opcional. Si es mayor al precio actual se muestra un badge de descuento.
+   */
+  compareAtPrice?: number | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  /**
+   * Muestra el badge "Nuevo" en la tarjeta de producto.
+   */
+  newArrival?: boolean | null;
   relatedProducts?: (number | Product)[] | null;
   meta?: {
     title?: string | null;
@@ -477,16 +487,39 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (
-    | CallToActionBlock
-    | ContentBlock
-    | MediaBlock
-    | ArchiveBlock
-    | CarouselBlock
-    | ThreeItemGridBlock
-    | BannerBlock
-    | FormBlock
-  )[];
+  /**
+   * Texto de la página. Se muestra cuando la página no usa bloques de layout.
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  layout?:
+    | (
+        | CallToActionBlock
+        | ContentBlock
+        | MediaBlock
+        | ArchiveBlock
+        | CarouselBlock
+        | ThreeItemGridBlock
+        | BannerBlock
+        | FormBlock
+        | HeroSliderBlock
+        | FeaturedProductsBlock
+        | WhyUsBlock
+      )[]
+    | null;
   meta?: {
     title?: string | null;
     /**
@@ -868,6 +901,70 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSliderBlock".
+ */
+export interface HeroSliderBlock {
+  slides?:
+    | {
+        type?: ('custom' | 'offer' | 'shipping' | 'payment') | null;
+        active?: boolean | null;
+        title: string;
+        description?: string | null;
+        desktopImage?: (number | null) | Media;
+        mobileImage?: (number | null) | Media;
+        /**
+         * Ruta/URL directa (ej. /banner1.png) si no subes imagen. Si se deja vacío se usa /bannerN.png.
+         */
+        imageUrl?: string | null;
+        buttonLabel?: string | null;
+        buttonLink?: string | null;
+        note?: string | null;
+        showSocialLinks?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?: {
+    instagram?: string | null;
+    facebook?: string | null;
+    tiktok?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroSlider';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsBlock".
+ */
+export interface FeaturedProductsBlock {
+  heading?: string | null;
+  limit?: number | null;
+  linkLabel?: string | null;
+  linkUrl?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredProducts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyUsBlock".
+ */
+export interface WhyUsBlock {
+  heading?: string | null;
+  items?:
+    | {
+        icon?: ('leaf' | 'globe' | 'heart') | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'whyUs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "variants".
  */
 export interface Variant {
@@ -1208,6 +1305,7 @@ export interface PagesSelect<T extends boolean = true> {
             };
         media?: T;
       };
+  content?: T;
   layout?:
     | T
     | {
@@ -1219,6 +1317,9 @@ export interface PagesSelect<T extends boolean = true> {
         threeItemGrid?: T | ThreeItemGridBlockSelect<T>;
         banner?: T | BannerBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        heroSlider?: T | HeroSliderBlockSelect<T>;
+        featuredProducts?: T | FeaturedProductsBlockSelect<T>;
+        whyUs?: T | WhyUsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1348,6 +1449,66 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSliderBlock_select".
+ */
+export interface HeroSliderBlockSelect<T extends boolean = true> {
+  slides?:
+    | T
+    | {
+        type?: T;
+        active?: T;
+        title?: T;
+        description?: T;
+        desktopImage?: T;
+        mobileImage?: T;
+        imageUrl?: T;
+        buttonLabel?: T;
+        buttonLink?: T;
+        note?: T;
+        showSocialLinks?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        instagram?: T;
+        facebook?: T;
+        tiktok?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsBlock_select".
+ */
+export interface FeaturedProductsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  limit?: T;
+  linkLabel?: T;
+  linkUrl?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyUsBlock_select".
+ */
+export interface WhyUsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1618,6 +1779,10 @@ export interface ProductsSelect<T extends boolean = true> {
   variants?: T;
   priceInUSDEnabled?: T;
   priceInUSD?: T;
+  compareAtPrice?: T;
+  rating?: T;
+  reviewCount?: T;
+  newArrival?: T;
   relatedProducts?: T;
   meta?:
     | T

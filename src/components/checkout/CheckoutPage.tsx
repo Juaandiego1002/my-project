@@ -19,7 +19,7 @@ import { CheckoutForm } from '@/components/forms/CheckoutForm'
 import { useAddresses, useCart, usePayments } from '@payloadcms/plugin-ecommerce/client/react'
 import { CheckoutAddresses } from '@/components/checkout/CheckoutAddresses'
 import { CreateAddressModal } from '@/components/addresses/CreateAddressModal'
-import { Address } from '@/payload-types'
+import { Address, Product, Variant } from '@/payload-types'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AddressItem } from '@/components/addresses/AddressItem'
 import { FormItem } from '@/components/forms/FormItem'
@@ -361,7 +361,7 @@ export const CheckoutPage: React.FC = () => {
                 product: { id, meta, title, gallery },
                 quantity,
                 variant,
-              } = item
+              } = item as { product: Product; quantity: number; variant: Variant | null }
 
               if (!quantity) return null
 

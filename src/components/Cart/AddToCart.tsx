@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import type { Product, Variant } from '@/payload-types'
 
 import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
-import clsx from 'clsx'
 import { useSearchParams } from 'next/navigation'
 import React, { useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
@@ -94,18 +93,19 @@ export function AddToCart({ product }: Props) {
     return false
   }, [selectedVariant, cart?.items, product])
 
+  const soldOut = product.enableVariants
+    ? !selectedVariant || selectedVariant.inventory === 0
+    : product.inventory === 0
+
   return (
     <Button
-      aria-label="Add to cart"
-      variant={'outline'}
-      className={clsx({
-        'hover:opacity-90': true,
-      })}
+      aria-label="Agregar al carrito"
+      className="w-full bg-brand-dark text-white hover:bg-brand-dark/90 sm:w-auto"
       disabled={disabled || isLoading}
       onClick={addToCart}
       type="submit"
     >
-      Add To Cart
+      {soldOut ? 'Agotado' : 'Agregar al carrito'}
     </Button>
   )
 }
