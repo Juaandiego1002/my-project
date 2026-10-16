@@ -5,6 +5,10 @@ import { Carousel } from '@/blocks/Carousel/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { adminOnly } from '@/access/adminOnly'
+import { AboutIntro } from '@/blocks/AboutIntro/config'
+import { AboutStats } from '@/blocks/AboutStats/config'
+import { AboutStory } from '@/blocks/AboutStory/config'
+import { AboutValues } from '@/blocks/AboutValues/config'
 import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
@@ -101,6 +105,10 @@ export const Pages: CollectionConfig = {
               type: 'blocks',
               minRows: 0,
               blocks: [
+                AboutIntro,
+                AboutStats,
+                AboutStory,
+                AboutValues,
                 CallToAction,
                 Content,
                 MediaBlock,

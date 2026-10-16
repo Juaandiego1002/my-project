@@ -14,6 +14,18 @@ export const CallToAction: Block = {
   interfaceName: 'CallToActionBlock',
   fields: [
     {
+      name: 'appearance',
+      type: 'select',
+      admin: {
+        description: 'Cómo se renderiza el bloque.',
+      },
+      defaultValue: 'default',
+      options: [
+        { label: 'Default', value: 'default' },
+        { label: 'Highlight (destacado oscuro)', value: 'highlight' },
+      ],
+    },
+    {
       name: 'richText',
       type: 'richText',
       editor: lexicalEditor({

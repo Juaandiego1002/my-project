@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
     loadPaths: ['./node_modules/@payloadcms/ui/dist/scss/'],
   },
   images: {
+    // Next.js 16 refuses to optimize images whose hostname resolves to a private IP (SSRF guard).
+    // In development the site serves its own media from http://localhost:3000, so allow local IPs there only.
+    ...(process.env.NODE_ENV === 'development' ? { dangerouslyAllowLocalIP: true } : {}),
     localPatterns: [
       {
         pathname: '/api/media/file/**',

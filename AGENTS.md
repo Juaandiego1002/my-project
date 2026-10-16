@@ -11,7 +11,8 @@ Its snippets use `mongooseAdapter`; this repo uses `postgresAdapter` (`src/paylo
 ## Architecture
 
 - Storefront routes: `src/app/(app)` — Payload admin + REST/GraphQL API: `src/app/(payload)`. No separate backend service.
-- Payload config: `src/payload.config.ts`. Local collections are only `Users`, `Pages`, `Categories`, `Media`. Products, variants, carts, orders, transactions, addresses are injected by `@payloadcms/plugin-ecommerce` through collection **overrides** declared in `src/plugins/index.ts` — customize them there, don't create parallel collections.
+- Payload config: `src/payload.config.ts`. Local collections are only `Users`, `Pages`, `Categories`, `Media`. Products, variants, carts, orders, transactions, addresses are injected by `@payloadcms/plugin-ecommerce` through collection **overrides** declared in `src/plugins/index.ts` — customize them there, don't create parallel collections. The Products override itself lives in `src/collections/Products/`.
+- Repo is customized from the stock template: Spanish UI/copy, custom `/nosotros` page, seeded catalogue content. Don't assume upstream-template behaviour or copy verbatim from the README.
 - Access rules: `src/access/`; layout blocks: `src/blocks/` + `src/heros/`; reusable UI in `src/components/` (shadcn/ui style).
 - Path aliases (`tsconfig.json`): `@/*` → `src/*`, `@payload-config` → `src/payload.config.ts`.
 - `src/payload-types.ts` is generated but committed; `src/collections` code imports from it.
@@ -23,9 +24,9 @@ Its snippets use `mongooseAdapter`; this repo uses `postgresAdapter` (`src/paylo
 - `./scripts/dev-stack.sh` — builds and runs **Postgres + Next in Docker** (`up` is idempotent, plus `rebuild`, `down`, `logs`, `ps`, `shell`, `db`, `reset`). Host port 3000 must be free: a host `pnpm dev` and the container cannot both own it (the script aborts unless the responder on 3000 is its own app container). After changing `package.json`/`pnpm-lock.yaml` use `rebuild`, not `up` — `up` reuses the container's old `node_modules` volume.
 - `pnpm generate:types` — run after any collection/field change and commit the updated `src/payload-types.ts`.
 - `pnpm payload <cmd>` — Payload CLI, e.g. `pnpm payload migrate:create`, `pnpm payload migrate`.
-- `pnpm exec prettier --write .` — formatting (`.prettierrc.json`: no semicolons, single quotes, printWidth 100, Tailwind plugin sorts classes). `lint-staged`/`@vercel/git-hooks` are installed but unconfigured, so nothing runs on commit.
-- `pnpm lint` / `pnpm lint:fix` and `pnpm exec tsc --noEmit` — see **Known broken state** before assuming you caused failures.
-- There is no typecheck script; `pnpm build` type-checks as part of the build (and currently fails for the pre-existing reasons below).
+- `pnpm exec prettier --write .` — formatting (`.prettierrc.json`: no semicolons, single quotes, printWidth 100). `lint-staged` is a devDep but unconfigured (no `.lintstagedrc`, no husky), so nothing runs on commit.
+- `pnpm lint` / `pnpm lint:fix` and `pnpm exec tsc --noEmit` — see **Verification status** before assuming you caused failures.
+- There is no typecheck script; `pnpm build` type-checks as part of the build.
 
 ## Database and environment
 
@@ -42,9 +43,9 @@ Its snippets use `mongooseAdapter`; this repo uses `postgresAdapter` (`src/paylo
 - Run one test: `pnpm test:int tests/int/api.int.spec.ts` or `pnpm test:e2e tests/e2e/frontend.e2e.spec.ts`.
 - `pnpm test` runs int first, then e2e.
 
-## Known broken state (verify it still reproduces; don't treat as your regression)
+## Verification status (re-verify before blaming yourself for failures)
 
-- `pnpm lint` crashes immediately: `TypeError: Converting circular structure to JSON` from `FlatCompat.extends('next/core-web-vitals', 'next/typescript')` (ESLint 9.39 + eslint-config-next 16.3.3).
-- `pnpm exec tsc --noEmit` and `pnpm build` fail with 8 pre-existing type errors in `src/components/Cart/CartModal.tsx`, `src/components/checkout/CheckoutPage.tsx`, and `src/utilities/generatePreviewPath.ts` (the last one imports stale `@/app/(frontend)/…` and a non-existent `posts` collection; the real route group is `(app)`).
-- `pnpm exec prettier --check .` currently flags 2 files (`.agents/skills/payload/reference/ENDPOINTS.md`, `src/components/LoadingSpinner/index.tsx`).
-- README.md is upstream template prose: its `docker-compose up` instruction predates this repo's `docker-compose.yml` (use `docker compose up -d`), and the caching note referencing `./src/app/_api` (no such directory) is stale.
+- `pnpm build` and `pnpm exec tsc --noEmit` both pass today (exit 0). There is no standalone typecheck; build does it.
+- `pnpm lint` runs (ESLint flat config `eslint.config.mjs`) but exits 1: 3 hard errors — `react/no-unescaped-entities` in `src/app/(app)/nosotros/page.tsx` (lines 24, 30, 81) — plus ~118 warnings (`no-unused-vars`, `no-explicit-any`, `react-hooks/set-state-in-effect`). Only the 3 errors fail the run; warnings do not.
+- `pnpm exec prettier --check .` flags exactly one file: the Payload-generated `src/app/(payload)/admin/importMap.js` (regenerated on `pnpm generate:importmap` / build).
+- README.md is upstream template prose and partly stale: it says `docker-compose up` (use `docker compose up -d`) and its caching note references `./src/app/_api` / `(pages)` routes that don't exist (real route group is `(app)`).

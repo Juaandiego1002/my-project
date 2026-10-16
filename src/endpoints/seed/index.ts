@@ -2,6 +2,7 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from '
 
 import { contactFormData } from './contact-form'
 import { contactPageData } from './contact-page'
+import { nosotrosPageData } from './nosotros-page'
 import { productHatData } from './product-hat'
 import { productTshirtData, productTshirtVariant } from './product-tshirt'
 import { homePageData } from './home'
@@ -331,6 +332,14 @@ export const seed = async ({
     }),
   ])
 
+  await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: nosotrosPageData({
+      introImage: imageHat,
+    }),
+  })
+
   payload.logger.info(`— Seeding addresses...`)
 
   const customerUSAddress = await payload.create({
@@ -537,6 +546,23 @@ export const seed = async ({
     payload.updateGlobal({
       slug: 'footer',
       data: {
+        brandName: "NATURALVER'S",
+        contact: {
+          email: 'info@naturalvers.com',
+          whatsapp: '+57 310 6198912',
+        },
+        socialLinks: [
+          {
+            platform: 'instagram',
+            url: 'https://instagram.com/naturalvers_21',
+            label: 'Instagram',
+          },
+          {
+            platform: 'tiktok',
+            url: 'https://tiktok.com/@naturalvers',
+            label: 'TikTok',
+          },
+        ],
         navItems: [
           {
             link: {

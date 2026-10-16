@@ -403,6 +403,10 @@ export interface VariantType {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Cómo se renderiza el bloque.
+   */
+  appearance?: ('default' | 'highlight') | null;
   richText?: {
     root: {
       type: string;
@@ -507,6 +511,10 @@ export interface Page {
   } | null;
   layout?:
     | (
+        | AboutIntroBlock
+        | AboutStatsBlock
+        | AboutStoryBlock
+        | AboutValuesBlock
         | CallToActionBlock
         | ContentBlock
         | MediaBlock
@@ -536,6 +544,144 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutIntroBlock".
+ */
+export interface AboutIntroBlock {
+  badge?: string | null;
+  heading: string;
+  paragraphs?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  media?: (number | null) | Media;
+  mediaAlt?: string | null;
+  stat?: {
+    value?: string | null;
+    label?: string | null;
+    description?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutIntro';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutStatsBlock".
+ */
+export interface AboutStatsBlock {
+  items?:
+    | {
+        icon?: ('leaf' | 'shield' | 'users' | 'sparkles') | null;
+        value: string;
+        label: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutStats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutStoryBlock".
+ */
+export interface AboutStoryBlock {
+  historyHeading: string;
+  history?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  missionHeading: string;
+  missionBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  visionHeading: string;
+  visionBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutStory';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutValuesBlock".
+ */
+export interface AboutValuesBlock {
+  heading: string;
+  intro?: string | null;
+  items?:
+    | {
+        icon?: ('leaf' | 'sparkles' | 'heart' | 'shield' | 'recycle' | 'users') | null;
+        color?: ('green' | 'emerald' | 'pink' | 'blue' | 'teal' | 'purple') | null;
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutValues';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1309,6 +1455,10 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        aboutIntro?: T | AboutIntroBlockSelect<T>;
+        aboutStats?: T | AboutStatsBlockSelect<T>;
+        aboutStory?: T | AboutStoryBlockSelect<T>;
+        aboutValues?: T | AboutValuesBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1336,9 +1486,100 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutIntroBlock_select".
+ */
+export interface AboutIntroBlockSelect<T extends boolean = true> {
+  badge?: T;
+  heading?: T;
+  paragraphs?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  media?: T;
+  mediaAlt?: T;
+  stat?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        description?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutStatsBlock_select".
+ */
+export interface AboutStatsBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        icon?: T;
+        value?: T;
+        label?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutStoryBlock_select".
+ */
+export interface AboutStoryBlockSelect<T extends boolean = true> {
+  historyHeading?: T;
+  history?: T;
+  missionHeading?: T;
+  missionBody?: T;
+  visionHeading?: T;
+  visionBody?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutValuesBlock_select".
+ */
+export interface AboutValuesBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        color?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  appearance?: T;
   richText?: T;
   links?:
     | T
@@ -1989,6 +2230,28 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  contact?: {
+    email?: string | null;
+    /**
+     * Número internacional, por ejemplo +57 310 6198912. Solo se usan los dígitos para el enlace de WhatsApp.
+     */
+    whatsapp?: string | null;
+  };
+  socialLinks?:
+    | {
+        platform: 'instagram' | 'tiktok' | 'facebook' | 'youtube' | 'x' | 'other';
+        /**
+         * Debe empezar por http:// o https://
+         */
+        url: string;
+        /**
+         * Nombre accesible para la red (obligatorio si eliges "Otra").
+         */
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  brandName?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2034,6 +2297,21 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  contact?:
+    | T
+    | {
+        email?: T;
+        whatsapp?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  brandName?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

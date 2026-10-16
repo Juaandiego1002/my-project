@@ -9,12 +9,20 @@ import { HeroSliderBlock } from '@/blocks/HeroSlider/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
 import { WhyUsBlock } from '@/blocks/WhyUs/Component'
+import { AboutIntroBlock } from '@/blocks/AboutIntro/Component'
+import { AboutStatsBlock } from '@/blocks/AboutStats/Component'
+import { AboutStoryBlock } from '@/blocks/AboutStory/Component'
+import { AboutValuesBlock } from '@/blocks/AboutValues/Component'
 import { toKebabCase } from '@/utilities/toKebabCase'
 import React, { Fragment } from 'react'
 
 import type { Page } from '../payload-types'
 
 const blockComponents = {
+  aboutIntro: AboutIntroBlock,
+  aboutStats: AboutStatsBlock,
+  aboutStory: AboutStoryBlock,
+  aboutValues: AboutValuesBlock,
   archive: ArchiveBlock,
   banner: BannerBlock,
   carousel: CarouselBlock,
